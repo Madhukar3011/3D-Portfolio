@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import fragmentShader from '../shaders/fragment.glsl';
 import vertexShader from '../shaders/vertex.glsl';
+import { useGSAP} from '@gsap/react'
+import { gsap } from 'gsap';
+
 
 const IMAGE_URL = [
   "./4k.jpeg",
@@ -32,8 +35,8 @@ const Card = ({index,texture,scrollSpeedRef }) => {
       });
 
       const uniforms = {
-        uTexture: {value: texture},
-        useScrollSpeed: {value: 0}, 
+        uTexture: { value: texture },
+        uScrollSpeed: { value: 0 }, 
       };
 
       const materialRef = useRef(null);
@@ -41,11 +44,11 @@ const Card = ({index,texture,scrollSpeedRef }) => {
       useFrame(()=> {
           if(!materialRef.current) return;
 
-          materialRef.current.uniforms.uScrollspeed.value = scrollSpeedRef.current;
+          materialRef.current.uniforms.uScrollSpeed.value = scrollSpeedRef.current;
       })
 
   return (
-    <mesh position={position} rotation = {[0, angle, 0]} >
+    < mesh position={position} rotation = {[0, angle, 0]} >
       <planeGeometry args={[CARD_W, CARD_H, 32, 32]}/>
       <shaderMaterial 
       ref={materialRef}
@@ -70,6 +73,9 @@ const Experience = () => {
     const scrollSpeedRef = useRef(0);
     const targetScrollSpeedRef = useRef(0);
 
+    const mouseMouseRef = useRef({x: 0, y: 0});
+    const targetMouseRef = useRef({x: 0, y: 0});
+
     const {gl} = useThree();
     
     useEffect(() => {
@@ -87,6 +93,22 @@ const Experience = () => {
       }
     },[gl]);
 
+    useEffect(()=> {
+      window.addEventListener('mousemove', (e)=> {
+        targetMouseRef.current.x = (e.clientX / window.innerWidth -0.5) * 2;
+        targetMouseRef.current.y = (e.clientY / window.innerHeight -0.5) * 2;
+      })
+    });
+
+    useGSAP(()=> {
+      gsap.to(mouseMouseRef.current,{
+        x: targetMouseRef.current.x * 0.05,
+        y: targetMouseRef.current.y * 0.05,
+        duration: 0.6,
+        ease: 'power2.out'
+      })
+    })
+
     useFrame(()=> {
       if(!groupRef.current) return;
 
@@ -94,6 +116,10 @@ const Experience = () => {
       scrollSpeedRef.current += (targetScrollSpeedRef.current - scrollSpeedRef.current) * LERP_RATIO;
 
       groupRef.current.rotation.y = currentRotationRef.current;
+
+    groupRef.current.rotation.x += (-targetMouseRef.current.x * 0.3 - groupRef.current.rotation.x) * 0.5;
+    groupRef.current.rotation.z += (targetMouseRef.current.y * 0.3 - groupRef.current.rotation.z) * 0.3;
+
       targetScrollSpeedRef.current *= 0.8;
     })
 

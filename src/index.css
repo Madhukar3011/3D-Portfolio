@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Redaction+50:ital,wght@0,400;0,700;1,400&display=swap');
+
+
+body{
+    background-color: #ebebeb;
+   font-family: "Redaction 50", serif;
+   font-weight: 600;
+}
+
