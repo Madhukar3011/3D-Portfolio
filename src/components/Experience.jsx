@@ -6,6 +6,7 @@ import fragmentShader from '../shaders/fragment.glsl';
 import vertexShader from '../shaders/vertex.glsl';
 import { useGSAP} from '@gsap/react'
 import { gsap } from 'gsap';
+import { useNavigate } from 'react-router-dom';
 
 
 const IMAGE_URL = [
@@ -47,8 +48,19 @@ const Card = ({index,texture,scrollSpeedRef }) => {
           materialRef.current.uniforms.uScrollSpeed.value = scrollSpeedRef.current;
       })
 
+    const navigate =  useNavigate();
+
+      const handleClick = () =>{
+        navigate(`/project/${index}`)
+      }
+
   return (
-    < mesh position={position} rotation = {[0, angle, 0]} >
+    < mesh 
+      onPointerEnter={()=> (document.body.style.cursor = "pointer")}
+      onPointerLeave={()=> (document.body.style.cursor = "default")}
+      onClick={() => handleClick(index)} 
+      position={position} 
+      rotation = {[0, angle, 0]} >
       <planeGeometry args={[CARD_W, CARD_H, 32, 32]}/>
       <shaderMaterial 
       ref={materialRef}

@@ -5,7 +5,7 @@ Experience
 
 const Three = () => {
   return (
-    <div className=' fixed top-0 left-0 z-[60] h-screen w-full'>
+    <div className=' fixed pointer-events-none top-0 left-0 z-[60] h-screen w-full'>
         <Canvas >
           {/* <OrbitControls /> */}
             <Experience/>
